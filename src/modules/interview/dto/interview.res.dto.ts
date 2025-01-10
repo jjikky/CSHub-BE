@@ -1,5 +1,4 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { PaginationResDto } from 'src/common/dto/pagination.dto';
 
 export class BaseInterviewDto {
   @ApiProperty({
@@ -104,20 +103,4 @@ export class FindInterviewByCategoryResDto {
     type: [FindInterviewResDto],
   })
   interviews: FindInterviewResDto[];
-}
-
-export class FindAllInterviewResDto {
-  @ApiProperty({
-    description: '카테고리별 인터뷰 목록',
-    type: [FindInterviewByCategoryResDto],
-  })
-  items: FindInterviewByCategoryResDto[];
-}
-
-export class SearchInterviewResDto extends PaginationResDto {
-  @ApiProperty({
-    description: '인터뷰 목록',
-    type: [FindInterviewInfoDto],
-  })
-  interviews: FindInterviewInfoDto[];
 }
