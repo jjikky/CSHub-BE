@@ -10,18 +10,23 @@ import { map, Observable } from 'rxjs';
 export class TransformInterceptor<T, R> implements NestInterceptor<T, R> {
   intercept(context: ExecutionContext, next: CallHandler): Observable<R> {
     return next.handle().pipe(
-      map((data) => {
+      map((response) => {
         const http = context.switchToHttp();
         const request = http.getRequest<Request>();
-
-        if (Array.isArray(data)) {
+        const { page = 1, limit = 10 } = request.query;
+        if (Array.isArray(response)) {
+          return { items: response };
+        }
+        if (request.query['page']) {
           return {
-            items: data,
-            page: Number(request.query['page'] || 1),
-            limit: Number(request.query['limit'] || 10),
+            page: Number(page),
+            limit: Number(limit),
+            total: response.total,
+            total_page: response.totalPage,
+            items: response.items,
           };
         }
-        return data;
+        return response;
       }),
     );
   }
