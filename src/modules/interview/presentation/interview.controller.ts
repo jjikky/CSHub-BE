@@ -4,32 +4,35 @@ import { Roles } from 'src/common/decorator/role.decorator';
 import { Role } from 'src/modules/user/domain/role.enum';
 import { ApiBearerAuth, ApiExtraModels } from '@nestjs/swagger';
 import { ApiTags } from '@nestjs/swagger';
-import { ApiGetResponse } from 'src/common/decorator/swagger.decorator';
+import {
+  ApiGetPagedItemsResponse,
+  ApiGetItemsResponse,
+  ApiGetResponse,
+} from 'src/common/decorator/swagger.decorator';
 import { User, UserAfterAuth } from 'src/common/decorator/user.decorator';
 import { Public } from 'src/common/decorator/public.decorator';
-import { PaginationResDto } from 'src/common/dto/pagination.dto';
 import {
   CreateInterviewReqDto,
   SearchInterviewReqDto,
 } from '../dto/interview.req.dto';
 import {
-  FindAllInterviewResDto,
+  FindIntervieInfoWithLikeDto,
   FindInterviewByCategoryResDto,
+  FindInterviewInfoDto,
   FindInterviewResDto,
   FindInterviewWithLikeResDto,
   InterviewIdDto,
-  SearchInterviewResDto,
 } from '../dto/interview.res.dto';
+import { PaginationResDto } from 'src/common/dto/pagination.dto';
 @ApiTags('Interview')
 @ApiExtraModels(
   CreateInterviewReqDto,
   InterviewIdDto,
-  FindAllInterviewResDto,
-  SearchInterviewResDto,
   FindInterviewResDto,
   FindInterviewWithLikeResDto,
+  FindIntervieInfoWithLikeDto,
+  FindInterviewInfoDto,
   FindInterviewByCategoryResDto,
-  PaginationResDto,
 )
 @Controller('interviews')
 export class InterviewController {
@@ -46,26 +49,26 @@ export class InterviewController {
 
   @Public()
   @Get('/search')
-  @ApiGetResponse(SearchInterviewResDto)
+  @ApiGetPagedItemsResponse(FindInterviewInfoDto)
   async search(
     @Query() searchInterviewReqDto: SearchInterviewReqDto,
     @User() user?: UserAfterAuth,
-  ): Promise<SearchInterviewResDto> {
+  ): Promise<PaginationResDto<FindInterviewInfoDto>> {
     return await this.interviewService.search(user?.id, searchInterviewReqDto);
   }
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get()
-  @ApiGetResponse(FindAllInterviewResDto)
-  async findAll(): Promise<FindAllInterviewResDto> {
+  @ApiGetItemsResponse(FindInterviewByCategoryResDto)
+  async findAll(): Promise<FindInterviewByCategoryResDto[]> {
     return await this.interviewService.findAll();
   }
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get(':id')
-  @ApiGetResponse(FindInterviewResDto)
+  @ApiGetResponse(FindIntervieInfoWithLikeDto)
   async findOne(
     @Param('id') id: number,
     @User() user?: UserAfterAuth,

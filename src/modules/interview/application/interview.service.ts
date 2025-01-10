@@ -8,12 +8,13 @@ import { InterviewGroupMapper } from '../../quiz/domain/mapper/interview-group.m
 
 import {
   InterviewIdDto,
-  FindAllInterviewResDto,
   FindInterviewResDto,
   FindInterviewWithLikeResDto,
-  SearchInterviewResDto,
+  FindInterviewByCategoryResDto,
+  // FindInterviewInfoDto,
 } from '../dto/interview.res.dto';
 import { LikeService } from 'src/modules/like/application/like.service';
+// import { PaginationResDto } from 'src/common/dto/pagination.dto';
 @Injectable()
 export class InterviewService {
   constructor(
@@ -31,10 +32,9 @@ export class InterviewService {
     return { id: interview.id };
   }
 
-  async findAll(): Promise<FindAllInterviewResDto> {
+  async findAll(): Promise<FindInterviewByCategoryResDto[]> {
     const interviews = await this.interviewRepository.findAll();
-    const interviewGroups = InterviewGroupMapper.toGroups(interviews);
-    return { items: interviewGroups };
+    return InterviewGroupMapper.toGroups(interviews);
   }
 
   async findOne(
@@ -58,7 +58,8 @@ export class InterviewService {
   async search(
     userId: number,
     searchInterviewReqDto: SearchInterviewReqDto,
-  ): Promise<SearchInterviewResDto> {
+  ): Promise<any> {
+    // ): Promise<PaginationResDto<FindInterviewInfoDto>> {
     const { interviews, total } = userId
       ? await this.interviewRepository.searchWithLike(
           userId,
@@ -66,22 +67,14 @@ export class InterviewService {
         )
       : await this.interviewRepository.search(searchInterviewReqDto);
 
-    const { page = 1, limit = 10 } = searchInterviewReqDto;
-    const totalPage = Math.ceil(total / limit);
-
-    const interviewsWithLike = interviews.map((interview) => ({
+    const items = interviews.map((interview) => ({
       ...interview,
       isLiked: userId
         ? (interview.likes?.some((like) => like.userId === userId) ?? false)
         : false,
     }));
 
-    return {
-      interviews: interviewsWithLike,
-      page,
-      limit,
-      total,
-      totalPage,
-    };
+    const totalPage = Math.ceil(total / searchInterviewReqDto.limit || 10);
+    return { items, total, totalPage };
   }
 }

@@ -24,27 +24,22 @@ export class PaginationReqDto {
   limit?: number;
 }
 
-export class PaginationResDto {
-  @ApiProperty({
-    description: '현재 페이지',
-    example: 1,
-  })
+export class PaginationResDto<T> {
   page: number;
-
-  @ApiProperty({
-    description: '페이지당 항목 수',
-    example: 10,
-  })
   limit: number;
 
   @ApiProperty({
-    description: '전체 항목 수',
-    example: 100,
+    description: '전체 데이터 수',
+    example: 192,
   })
   total: number;
+
   @ApiProperty({
-    description: '전체 ��이지',
-    example: 10,
+    description: '전체 페이지 수',
+    example: 20,
   })
   totalPage: number;
+
+  @ApiProperty({ description: '데이터 목록' })
+  items: T[];
 }
