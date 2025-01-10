@@ -8,7 +8,7 @@ import * as expressBasicAuth from 'express-basic-auth';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { utilities, WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
-// import { TransformInterceptor } from './common/interceptor/transform.interceptor';
+import { TransformInterceptor } from './common/interceptor/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -75,8 +75,7 @@ async function bootstrap() {
     }),
   );
 
-  // TODO: 추후 페이징 처리 시점에 활성화
-  // app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   await app.listen(configService.get('app.port'));
   Logger.log(`STAGE: ${configService.get('app.nodeEnv')}`);

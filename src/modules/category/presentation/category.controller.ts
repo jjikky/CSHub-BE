@@ -10,12 +10,12 @@ import {
 import { Roles } from 'src/common/decorator/role.decorator';
 import { CreateSubCategoryReqDto } from '../dto/category.req.dto';
 import { Public } from 'src/common/decorator/public.decorator';
-import { FindSubCategoryWithCountResDto } from '../dto/category.res.dto';
-import { ApiGetResponse } from 'src/common/decorator/swagger.decorator';
+import { SubCategoryWithCountDto } from '../dto/category.res.dto';
+import { ApiGetItemsResponse } from 'src/common/decorator/swagger.decorator';
 import { FindSubCategoryByMainReqDto } from '../dto/category.req.dto';
 
 @ApiTags('Category')
-@ApiExtraModels(CreateSubCategoryReqDto, FindSubCategoryWithCountResDto)
+@ApiExtraModels(CreateSubCategoryReqDto, SubCategoryWithCountDto)
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -34,12 +34,10 @@ export class CategoryController {
     description:
       '메인 카테고리에 속한 서브카테고리들의 이름과 각각의 인터뷰 개수를 반환합니다.',
   })
-  @ApiGetResponse(FindSubCategoryWithCountResDto)
+  @ApiGetItemsResponse(SubCategoryWithCountDto)
   async findSubCategoryWithCount(
     @Param() { main_category }: FindSubCategoryByMainReqDto,
-  ): Promise<FindSubCategoryWithCountResDto> {
-    const result =
-      await this.categoryService.findSubCategoryWithCount(main_category);
-    return { data: result };
+  ): Promise<SubCategoryWithCountDto[]> {
+    return await this.categoryService.findSubCategoryWithCount(main_category);
   }
 }

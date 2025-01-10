@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class SubCategoryWithCountDto {
+export class SubCategoryWithCountDto {
   @ApiProperty({
     description: '서브 카테고리명',
     example: 'network',
@@ -12,12 +12,4 @@ class SubCategoryWithCountDto {
     example: 10,
   })
   interviewCount: number;
-}
-
-export class FindSubCategoryWithCountResDto {
-  @ApiProperty({
-    description: '서브 카테고리와 인터뷰 개수 목록',
-    type: [SubCategoryWithCountDto],
-  })
-  data: SubCategoryWithCountDto[];
 }

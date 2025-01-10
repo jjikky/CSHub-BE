@@ -14,10 +14,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  // TODO : swagger 추가
+  // TODO : response type 추가
   async getUsers(@User() user: UserAfterAuth) {
     console.log(user);
-    const users = await this.userService.findAll();
-    return users;
+    return await this.userService.findAll();
   }
 
   @ApiGetResponse(FindUserResDto)
