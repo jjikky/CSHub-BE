@@ -12,7 +12,7 @@ export const ApiGetResponse = <TModel extends Type<any>>(model: TModel) => {
   );
 };
 
-export const ApiGetItemsResponse = <TModel extends Type<any>>(
+export const ApiGetPagedItemsResponse = <TModel extends Type<any>>(
   model: TModel,
 ) => {
   return applyDecorators(
@@ -49,6 +49,30 @@ export const ApiGetItemsResponse = <TModel extends Type<any>>(
               },
             },
             required: ['items', 'page', 'limit'],
+          },
+        ],
+      },
+    }),
+  );
+};
+
+export const ApiGetItemsResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
+  return applyDecorators(
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          {
+            properties: {
+              items: {
+                type: 'array',
+                items: {
+                  $ref: getSchemaPath(model),
+                },
+              },
+            },
+            required: ['items'],
           },
         ],
       },
